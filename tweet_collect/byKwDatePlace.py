@@ -93,8 +93,8 @@ if r['data']:
         if r['meta']['next_token']:
             
             r = json.loads(main('(vandalos vándalos) OR (VANDALISMO VANDALIZAR) -is:retweet place_country:CO',
-              end_time='2021-04-28T23:59:00.00Z',
-              start_time='2020-04-28T00:00:00.00Z',
+              start_time='2021-04-28T23:59:00.00Z',
+              end_time='2020-04-28T00:00:00.00Z',
               tweet_fields='created_at',
               max_results=500,
               next_token=r['meta']['next_token']))
@@ -120,3 +120,11 @@ if r['data']:
             print('no more results')
             break
 print(len(results_query))
+
+#### así lo queremos...
+main('query',
+    param1='value1',
+    param2='value2')
+
+# -> que retorne la totalidad de resultados
+-> ... <-
