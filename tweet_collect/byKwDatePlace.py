@@ -20,7 +20,7 @@ def create_headers(bearer_token):
     return headers
 
 # Build query
-def make_query(query,start_time=None,end_time=None,tweet_fields=None, max_results=None,next_token=None):
+def make_query(query,start_time=None,end_time=None,tweet_fields=None,max_results=None,next_token=None):
 
     query_params = {'query':query}
 
@@ -74,7 +74,7 @@ def main(query,start_time=None,end_time=None,tweet_fields=None,max_results=None,
     # return json.dumps(json_response, indent=4, sort_keys=True)
     return json_response
 
-def collect_tweets(query,end_time=None,start_time=None,tweet_fields=None,max_results=None):
+def collect_tweets(query,start_time=None,end_time=None,tweet_fields=None,max_results=None):
     '''collect tweets by query and params between start_date and end date'''
 
     # data y meta
@@ -84,8 +84,8 @@ def collect_tweets(query,end_time=None,start_time=None,tweet_fields=None,max_res
     r = main(query,
              start_time,
              end_time,
-             tweet_fields,
-             max_results)
+             tweet_fields=tweet_fields,
+             max_results=max_results)
 
     # compare if data is not empty
     var_cont = True
@@ -106,11 +106,11 @@ def collect_tweets(query,end_time=None,start_time=None,tweet_fields=None,max_res
                     next_token = r['meta']['next_token'] # private
                     
                     r = main(query,
-                             start_time,
-                             end_time,
-                             tweet_fields,
-                             max_results,
-                             next_token)
+                             start_time=start_time,
+                             end_time=end_time,
+                             tweet_fields=tweet_fields,
+                             max_results=max_results,
+                             next_token=next_token)
 
                     print(r)
 
@@ -133,7 +133,7 @@ def collect_tweets(query,end_time=None,start_time=None,tweet_fields=None,max_res
 #print(len(results_query))
 
 collect_tweets('(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO',
-                start_time='2021-04-28T23:59:00.00Z',
-                end_time='2021-04-28T00:00:00.00Z',
+                end_time='2021-04-28T23:59:00.00Z',
+                start_time='2021-04-28T00:00:00.00Z',
                 tweet_fields='created_at',
                 max_results=500)
