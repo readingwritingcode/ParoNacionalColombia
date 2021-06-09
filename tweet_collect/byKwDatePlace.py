@@ -20,7 +20,7 @@ def create_headers(bearer_token):
     return headers
 
 # Build query
-def make_query(query,start_time=None,end_time=Nonetweet_fields=None, max_results=None,next_token=None):
+def make_query(query,start_time=None,end_time=None,tweet_fields=None, max_results=None,next_token=None):
 
     query_params = {'query':query}
 
