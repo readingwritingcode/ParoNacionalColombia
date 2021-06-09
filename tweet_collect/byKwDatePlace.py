@@ -1,30 +1,36 @@
-#
-import requests
+#!/usr/bin/python3
+
 import os
 import json
+import time
+import pandas as pd
+import requests
 
-bearer_token='<bearer_token_heare>'
+# Auth app
+bearer_token='AAAAAAAAAAAAAAAAAAAAAGP%2FQAEAAAAAp2a0chrCqnEx4QrQbC1vXruomVg%3Df8L6Mm1I1rthuKRBxiOxE6q3i45ZdLKCzIWuzVe5EK1p7chMGE'
 
+# EndPoint
+search_url = "https://api.twitter.com/2/tweets/search/all"
+
+# Headers for auth
 def create_headers(bearer_token):
     
     headers = {"Authorization":"Bearer {}".format(bearer_token)}
     
     return headers
 
-search_url = "https://api.twitter.com/2/tweets/search/all"
-
-
-def make_query(query,end_time=None,start_time=None,tweet_fields=None, max_results=None,next_token=None):
+# Build query
+def make_query(query,start_time=None,end_time=Nonetweet_fields=None, max_results=None,next_token=None):
 
     query_params = {'query':query}
-    
-    if end_time is not None:
-        
-        query_params['end_time'] = end_time
 
     if start_time is not None:
 
         query_params['start_time'] = start_time
+    
+    if end_time is not None:
+        
+        query_params['end_time'] = end_time
     
     if tweet_fields is not None:
 
@@ -53,8 +59,8 @@ def connect_to_endpoint(search_url,headers,params):
     
     return response.json()
 
-
-def main(query,end_time=None,start_time=None,tweet_fields=None,max_results=None,next_token=None):
+# Main
+def main(query,start_time=None,end_time=None,tweet_fields=None,max_results=None,next_token=None):
     
     query_params = make_query(query,start_time,end_time,tweet_fields,max_results,next_token)
     
@@ -62,69 +68,72 @@ def main(query,end_time=None,start_time=None,tweet_fields=None,max_results=None,
     
     json_response = connect_to_endpoint(search_url, headers, query_params)
     
-    print(json.dumps(json_response, indent=4, sort_keys=True))
-    
-    return json.dumps(json_response, indent=4, sort_keys=True)
+    # print(json.dumps(json_response, indent=4, sort_keys=True))
+    print(json_response)
 
-  
-#### example of use
-# data y meta
-results_query = []
+    # return json.dumps(json_response, indent=4, sort_keys=True)
+    return json_response
 
-# firts query results
-r = json.loads(main('(vandalos vándalos) OR (VANDALISMO VANDALIZAR) -is:retweet place_country:CO',
-              end_time='2021-04-28T23:59:00.00Z',
-              start_time='2020-04-28T00:00:00.00Z',
-              tweet_fields='created_at',
-              max_results=500))
+def collect_tweets(query,end_time=None,start_time=None,tweet_fields=None,max_results=None):
+    '''collect tweets by query and params between start_date and end date'''
 
-# compare if data is not empty
-var_cont = True
+    # data y meta
+    results_query = []
 
-if r['data']:
+    # firts query results
+    r = main(query,
+             start_time,
+             end_time,
+             tweet_fields,
+             max_results)
 
-    # store data
-    results_query.extend(r['data'])
-    
-    while var_cont:
+    # compare if data is not empty
+    var_cont = True
+
+    if r['data']:
+
+        # store data
+        results_query.extend(r['data'])
         
-        time.sleep(1.2)
-        
-        if r['meta']['next_token']:
+        while var_cont:
             
-            r = json.loads(main('(vandalos vándalos) OR (VANDALISMO VANDALIZAR) -is:retweet place_country:CO',
-              start_time='2021-04-28T23:59:00.00Z',
-              end_time='2020-04-28T00:00:00.00Z',
-              tweet_fields='created_at',
-              max_results=500,
-              next_token=r['meta']['next_token']))
-            
-            if r['data']:
-                # store data
-                for i in r['data']:
+            time.sleep(1.2)
+
+            try:
+                
+                if r['meta']['next_token']:
+
+                    next_token = r['meta']['next_token'] # private
                     
-                    if i['created_at'].split('-')[-1][:2] >= '28':
-                        # enhance this logic
-                        
-                        results_query+=[i]
-                        
-                    else:
-                        # out of date
-                        
-                        print('out of date')
-                        
-                        var_cont = False
+                    r = main(query,
+                             start_time,
+                             end_time,
+                             tweet_fields,
+                             max_results,
+                             next_token)
 
-        else:
-            # no more results
-            print('no more results')
-            break
-print(len(results_query))
+                    print(r)
 
-#### así lo queremos...
-main('query',
-    param1='value1',
-    param2='value2')
+                    results_query.extend(r['data'])
 
-# -> que retorne la totalidad de resultados
--> ... <-
+            except KeyError:
+
+                var_cont=False
+
+    print(len(results_query))
+
+    df = pd.DataFrame(results_query)
+
+    print(df.shape)
+
+    df.to_csv('tweets_28_04.csv')
+
+    return 'ok'
+
+#print(len(results_query))
+
+collect_tweets('(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO',
+                start_time='2021-04-28T23:59:00.00Z',
+                end_time='2021-04-28T00:00:00.00Z',
+                tweet_fields='created_at',
+                max_results=500)
