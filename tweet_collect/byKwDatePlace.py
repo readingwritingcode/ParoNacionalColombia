@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 
 # Auth app
-bearer_token='AAAAAAAAAAAAAAAAAAAAAGP%2FQAEAAAAAp2a0chrCqnEx4QrQbC1vXruomVg%3Df8L6Mm1I1rthuKRBxiOxE6q3i45ZdLKCzIWuzVe5EK1p7chMGE'
+bearer_token=''
 
 # EndPoint
 search_url = "https://api.twitter.com/2/tweets/search/all"
