@@ -148,15 +148,10 @@ def collect_tweets(query,start_time=None,end_time=None,tweet_fields=None):
 
 #print(len(results_query))
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 collect_tweets('(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO''(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO',
                 end_time='2021-05-28T23:59:00.00Z',
                 start_time='2021-05-28T00:00:00.00Z',
                 tweet_fields='created_at')
-=======
-collect_tweets('(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO',
-                end_time='2021-04-28T23:59:00.00Z',
-                start_time='2021-04-28T00:00:00.00Z',
-                tweet_fields='created_at',
-                max_results=500)
->>>>>>> 2d9b52801a4fcaecea519d0aa3a9c56e83d0c2b1
+#=======
+
