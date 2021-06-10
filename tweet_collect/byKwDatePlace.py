@@ -7,7 +7,7 @@ import pandas as pd
 import requests
 
 # Auth app
-bearer_token='AAAAAAAAAAAAAAAAAAAAAGP%2FQAEAAAAAp2a0chrCqnEx4QrQbC1vXruomVg%3Df8L6Mm1I1rthuKRBxiOxE6q3i45ZdLKCzIWuzVe5EK1p7chMGE'
+bearer_token=''
 
 # EndPoint
 search_url = "https://api.twitter.com/2/tweets/search/all"
@@ -53,9 +53,19 @@ def connect_to_endpoint(search_url,headers,params):
     
     print(response.status_code)
     
-    if response.status_code != 200:
+    if response.status_code != 200 and response.status_code != 503:
     
         raise Exception(response.status_code,response.text)
+
+    if response.status_code == 503:   # the Twitter servers are up, but overloaded with requests. 
+
+        time.sleep(3*60)             # Try again later.
+
+        print('sleeping for a moment')
+
+        response = requests.request("GET",search_url, headers=headers, params=params)
+
+        return response.json()
     
     return response.json()
 
@@ -74,7 +84,7 @@ def main(query,start_time=None,end_time=None,tweet_fields=None,max_results=None,
     # return json.dumps(json_response, indent=4, sort_keys=True)
     return json_response
 
-def collect_tweets(query,start_time=None,end_time=None,tweet_fields=None,max_results=None):
+def collect_tweets(query,start_time=None,end_time=None,tweet_fields=None):
     '''collect tweets by query and params between start_date and end date'''
 
     # data y meta
@@ -85,40 +95,46 @@ def collect_tweets(query,start_time=None,end_time=None,tweet_fields=None,max_res
              start_time,
              end_time,
              tweet_fields=tweet_fields,
-             max_results=max_results)
+             max_results=500)
 
     # compare if data is not empty
     var_cont = True
+    
+    try:
 
-    if r['data']:
+        if r['data']:
 
-        # store data
-        results_query.extend(r['data'])
-        
-        while var_cont:
+            # store data
+            results_query.extend(r['data'])
             
-            time.sleep(1.2)
-
-            try:
+            while var_cont:
                 
-                if r['meta']['next_token']:
+                time.sleep(1.2)
 
-                    next_token = r['meta']['next_token'] # private
+                try:
                     
-                    r = main(query,
-                             start_time=start_time,
-                             end_time=end_time,
-                             tweet_fields=tweet_fields,
-                             max_results=max_results,
-                             next_token=next_token)
+                    if r['meta']['next_token']:
 
-                    print(r)
+                        next_token = r['meta']['next_token'] # private
+                        
+                        r = main(query,
+                                start_time=start_time,
+                                end_time=end_time,
+                                tweet_fields=tweet_fields,
+                                max_results=500,
+                                next_token=next_token)
 
-                    results_query.extend(r['data'])
+                        print(r)
 
-            except KeyError:
+                        results_query.extend(r['data'])
 
-                var_cont=False
+                except KeyError:
+
+                    var_cont=False
+
+    except KeyError:
+
+        print('no results')
 
     print(len(results_query))
 
@@ -126,14 +142,13 @@ def collect_tweets(query,start_time=None,end_time=None,tweet_fields=None,max_res
 
     print(df.shape)
 
-    df.to_csv('tweets_28_04.csv')
+    df.to_csv('tweets_Revista_semana_28_05_k.csv')
 
     return 'ok'
 
 #print(len(results_query))
 
-collect_tweets('(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO',
-                end_time='2021-04-28T23:59:00.00Z',
-                start_time='2021-04-28T00:00:00.00Z',
-                tweet_fields='created_at',
-                max_results=500)
+collect_tweets('(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO''(vandalos OR vándalos) OR (VANDALISMO OR VANDALIZAR) -is:retweet place_country:CO',
+                end_time='2021-05-28T23:59:00.00Z',
+                start_time='2021-05-28T00:00:00.00Z',
+                tweet_fields='created_at')
