@@ -94,8 +94,8 @@ def main():
         'Development Status :: 3 - Alpha',
 
         # Indicate who your project is intended for
-        'Intended Audience :: social scientist, data-Scientist',
-        'Topic :: twitter data :: Build Tools',
+        'Intended Audience :: Developers',
+        'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish (should match "license" above)
         'License :: OSI Approved :: MIT License',
