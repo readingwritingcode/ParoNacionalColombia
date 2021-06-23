@@ -81,10 +81,7 @@ def main():
 
         # Dependent packages (distributions)
         install_requires=[
-         
-           
-            'pandas',
-            
+            'pandas'
         ],
         classifiers=[
         # How mature is this project? Common values are
