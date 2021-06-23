@@ -1,9 +1,11 @@
 # TweetCollect
-recoleccion de datos desde twitter a nivel nacional utilizando endpoints api v.2
+collect tweets by query string and api v.2 params.
+
+here is an example:
 
 ```python
 import time
-import tools
+import tweetcollect
 
 medios = [  'NoticiasRCN',
             'NoticiasCaracol',
@@ -29,7 +31,7 @@ for m in medios:
 
     print(m)
 
-    tools.collect_tweets(query,
+    tweetcollect.collect_tweets(query,
                          end_time='2021-05-28T23:59:00.00Z',
                          start_time='2021-04-28T0:00:00.00Z',
                          tweet_fields='created_at',name_file=query)
