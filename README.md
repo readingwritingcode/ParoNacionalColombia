@@ -1,7 +1,7 @@
 # TweetCollect
 recoleccion de datos desde twitter a nivel nacional utilizando endpoints api v.2
 
-```
+```python
 import time
 import tools
 
