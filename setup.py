@@ -54,7 +54,7 @@ def main():
         name="tweetscollector",
 
         # Version number (initial):
-        version="0.1.0-beta",
+        version="0.1.1-beta",
 
         # Application author details:
         author="labcinfEIB",
